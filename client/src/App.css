@@ -1,0 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@400;500;600;700;800&display=swap');
+
+*{
+  font-family: 'Dosis', sans-serif;
+}
+h1, h2, h3, h4, h6{
+  margin: 0;
+}

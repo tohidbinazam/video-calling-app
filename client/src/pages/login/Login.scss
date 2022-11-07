@@ -1,0 +1,145 @@
+.auth-section{
+    margin: 85px 0px;
+
+    .auth{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .auth-container{
+        width: 780px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+
+        .auth-slider{
+            background-image: url(https://www.instagram.com/static/images/homepage/phones/home-phones.png/1dc085cdb87d.png);
+            background-size: 110% 104%;
+            width: 50%;
+            background-repeat: no-repeat;
+            height: 600px;
+
+            .carousel{
+                .carousel-inner{
+                    .carousel-item{
+                        img{
+                            margin-left: 36%;
+                            margin-top: 7%;
+                            width: 62%;
+                        }
+                    }
+                }
+            }
+        }
+    
+        .auth-login-warper{
+            width: 50%;
+            text-align: center;
+
+            .auth-login{
+                    display: flex;
+                    flex-direction: column;
+                    background: #fff;
+                    border: 1px solid #dbdbdb;
+                    align-items: center;
+
+                a{
+                    img{
+                        margin: 40px 0px;
+                    }
+                }
+
+                form{
+                    display: flex;
+                    flex-direction: column;
+                    width: 80%;
+                    
+                    input {
+                        height: 38px;
+                        padding: 0px 12px;
+                        margin: 5px 0px;
+                        background: #fafafa;
+                        border: 1px solid #d8d8d8;
+                        border-radius: 3px;
+                        font-weight: 300;
+                        font-size: 0.9rem;
+                    }
+                    button{
+                        height: 35px;
+                        margin: 14px 0px 10px;
+                        background: #0095f6;
+                        border: none;
+                        color: #fff;
+                        font-weight: 600;
+                        border-radius: 5px;
+                    }
+                }
+                .divider{
+                    position: relative;
+                    margin: 7px 0px 22px;
+
+                    &::before{
+                        content: "";
+                        clear: both;
+                        display: block;
+                        position: absolute;
+                        width: 132px;
+                        height: 2px;
+                        background: #d4d4d4;
+                        top: 11px;
+                        right: 32px;
+                    }
+
+                    &::after{
+                        content: "";
+                        clear: both;
+                        display: block;
+                        position: absolute;
+                        width: 132px;
+                        height: 2px;
+                        background: #d4d4d4;
+                        top: 11px;
+                        left: 32px;
+                    }
+                }
+                .login-with-fb{
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                }
+                .login-with-fb, .forgot-pass{
+                    margin: 0px 0px 20px;
+                    color: #385185;
+                }
+            }
+            
+            .sing-up-box{
+                background: #fff;
+                border: 1px solid #dbdbdb;
+                padding: 18px 0px;
+                margin: 12px 0px 24px;
+            
+                .text-color{
+                    color: #0095f6;
+                    font-weight: 500;
+                }
+                
+            }
+
+            .get-app{
+                .app-logo{
+                    display: flex;
+                    justify-content: center;
+                    gap: 10px;
+                    margin: 20px 0px;
+
+                    img{
+                        width: 40%;
+                    }
+                }
+            }
+            
+        }
+    }
+}
+}

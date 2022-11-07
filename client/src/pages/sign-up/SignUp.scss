@@ -1,0 +1,30 @@
+.auth-section{
+    .auth-sign{
+        height: 130vh;
+
+        .auth-login{
+            color: #8e8e8e;
+
+            h5{
+                width: 80%;
+            }
+            .login-with-fb-sign{
+                background: #0095f6;
+                color: #fff;
+                width: 80%;
+                border-radius: 5px;
+                padding: 6px 0px;
+                margin: 12px 0px;
+
+            }
+            form{
+                margin-bottom: 25px;
+
+                p{
+                    width: 100%;
+                    font-size: 14px;
+                }
+            }
+        }
+}  
+}

@@ -1,2 +1,2 @@
- export const START_ON = 'START_ON'
- export const START_OFF = 'START_OFF'
+ export const LOGGED_IN = 'LOGGED_IN'
+ export const LOGGED_OUT = 'LOGGED_OUT'

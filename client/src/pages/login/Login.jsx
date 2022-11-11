@@ -2,13 +2,16 @@ import axios from 'axios';
 import React, { useState } from 'react'
 import { AiFillFacebook } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
-import cookie from 'js-cookie'
+import Cookie from 'js-cookie'
 import { toast } from 'react-toastify';
 import './Login.scss'
 import swal from 'sweetalert'
+import { useDispatch } from 'react-redux';
+import { loggedIn } from '../../redux/auth/action';
 
 const Login = () => {
 
+    const dispatch = useDispatch()
     const navigate = useNavigate()
 
     // Input state
@@ -31,12 +34,12 @@ const Login = () => {
         // loaderDispatch('START')
         try {
             if (input.email && input.password) {
-                await axios.post('http://localhost:5050/api/v1/user/login', input).then(res => {
+                await axios.post('api/v1/user/login', input).then(res => {
 
                     if (res.data.user.isVerified) {
                         swal('Good job', 'Successfully login you account', 'success')
-                        cookie.set('token', res.data.token)
-                        // authDispatch({type: 'LOGGED_IN', payload : res.data.user})
+                        Cookie.set('token', res.data.token)
+                        dispatch(loggedIn(res.data.user))
                     }else{
                         toast.error('Please verify your account')
                         navigate('/account-verify')

@@ -19,6 +19,7 @@
     "react-toastify": "^9.1.0",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
+    "simple-peer": "^9.11.1",
     "socket.io-client": "^4.5.3",
     "sweetalert": "^2.1.2",
     "web-vitals": "^2.1.4"
@@ -50,5 +51,5 @@
   "devDependencies": {
     "@redux-devtools/extension": "^3.2.3"
   },
-  "proxy": "http://localhost:5050/"
+  "proxy": "http://localhost:5050"
 }

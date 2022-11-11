@@ -29,6 +29,10 @@ const userModel = mongoose.Schema({
     photo : {
         type : String,
     },
+    callId:{
+        type : String,
+        default: null
+    },
     isVerified:{
         type : Boolean,
         default : false

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import Token from '../models/Token.js'
-import createError from './createError.js';
+import createError from '../utility/error/createError.js';
 
  const verifyToken = async (req, res, next) => {
 
@@ -11,9 +11,9 @@ import createError from './createError.js';
         
         // Get token data
         const token_data = await Token.findOne({ token })
-        
+
         if ( token_data ) {
-            res.status(200).json(verify.id)
+            res.status(200).json(verify.userId)
         } else {
             next(createError(404, 'Expire or Invalid URL'))
         }

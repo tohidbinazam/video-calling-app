@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllusers, getSingleuser, userLogin, userRegister, loggedInUser, verifyAccount, resentVerify, forgotPassword, resetPassword, userLogout } from "../controllers/userController.js";
+import { getAllUsers, getSingleUser, userLogin, userRegister, loggedInUser, verifyAccount, resentVerify, forgotPassword, resetPassword, userLogout, allUpdatedUser } from "../controllers/userController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 
 // Router init
@@ -14,10 +14,11 @@ router.post('/verify', verifyAccount)
 router.post('/resent-verify', resentVerify)
 router.post('/forgot-password', forgotPassword)
 router.patch('/reset-password', resetPassword)
+router.post('/updated-users', allUpdatedUser)
 
 // Router REST API
-router.route('/').get(authMiddleware, getAllusers)
-router.route('/:username').get(authMiddleware, getSingleuser)
+router.route('/').get(getAllUsers)
+router.route('/:username').get(authMiddleware, getSingleUser)
 
 
 // Export router

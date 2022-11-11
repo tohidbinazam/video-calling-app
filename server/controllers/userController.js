@@ -5,6 +5,7 @@ import Token from "../models/Token.js";
 import createLink from "../utility/createLink.js";
 import sentMail from "../utility/mail/sentMail.js";
 import createError from "../utility/error/createError.js";
+import randomCode from "../utility/randomCode.js";
 
 /**
  * @access Public 
@@ -12,7 +13,7 @@ import createError from "../utility/error/createError.js";
  * @method GET
  */
 
-export const getAllusers = async (req, res, next) => {
+export const getAllUsers = async (req, res, next) => {
 
     try {
         const users = await User.find()
@@ -29,7 +30,7 @@ export const getAllusers = async (req, res, next) => {
  * @method GET
  */
 
-export const getSingleuser = async (req, res, next) => {
+export const getSingleUser = async (req, res, next) => {
 
     // Get username
     const username = req.params.username
@@ -59,16 +60,17 @@ export const userRegister = async (req, res, next) => {
 
         if (check.length) {
             // fs.unlinkSync(`server/public/images/products/photos/${main_photo}`)
-            return next(createError(406, 'Already exist this Store'))
+            return next(createError(406, 'Already exist this User'))
         }
 
         // Password hashing
         const password = await bcryptjs.hash(req.body.password, 12)
 
+        // const callId = randomCode(20)
         // Create new user
         const user =  await User.create({ ...req.body, password })
  
-        const verify_link = await createLink(user._id, 'Verify-Account', '30d')
+        const verify_link = await createLink(user._id, 'verify-account', '30d')
     
         // Sent mail by Gmail
         sentMail(user.email, 'Verify Account', `Please verify Your account by click this <a href=${verify_link}>LINK</a>`)
@@ -129,7 +131,7 @@ export const userLogout = (req, res, next) => {
 export const loggedInUser = async (req, res, next) => {
 
     const token = req.headers.authorization
-
+    
     try {
         // Token verify
         const token_info = jwt.verify(token, process.env.SECRET_KEY)
@@ -217,7 +219,7 @@ export const forgotPassword = async (req, res, next) => {
             const reset_pass_link = await createLink(user._id, 'reset-password')
 
             // Sent mail by Gmail
-            sentMail(user.email, 'Reset Password', `Reset Your Password by click this <a href=${reset_pass_link}>LINK</a>`)
+            sentMail(user.email, 'Reset Password', `Reset Your Password by click this <a href=${reset_pass_link}>LINK</a>. Expire in 10min`)
 
             // Sent mail by SendGrid
             // sentMail(user.email, 'Reset Password', `Reset Your Password by click this <a href=${reset_pass_link}>LINK</a>`)
@@ -249,6 +251,21 @@ export const resetPassword = async (req, res, next) => {
         await User.findByIdAndUpdate(user_id, { password }, { new: true })
         
         res.status(200).json('Successfully update your password')
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+/**
+ * @access public
+ * @route /api/user/reset-password
+ * @method POST
+ */
+export const allUpdatedUser = async (id, callId) => {
+ 
+    try {
+        await User.findByIdAndUpdate(id, { callId })
     } catch (error) {
         next(error)
     }

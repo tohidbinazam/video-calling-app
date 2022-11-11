@@ -24,6 +24,7 @@
     "socket.io": "^4.5.3"
   },
   "devDependencies": {
-    "concurrently": "^7.5.0"
+    "concurrently": "^7.5.0",
+    "cors": "^2.8.5"
   }
 }

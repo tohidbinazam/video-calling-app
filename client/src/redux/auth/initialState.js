@@ -1,3 +1,6 @@
-const start = true
+const initialState = {
+    isLoggedIn : false,
+    user: null
+}
 
-export default start
+export default initialState

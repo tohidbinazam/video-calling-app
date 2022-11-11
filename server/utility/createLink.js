@@ -1,17 +1,17 @@
 import Token from "../models/Token.js";
-import { createJWT } from "./createJWT.js";
+import createJWT from "./createJWT.js";
+
+
 
 const createLink = async (userId, reason, jwt_exp ) => {
 
+    
     // Previous token remove
-    const check = await Token.find().and([{ userId }, { reason }])
-
-    if (check.length) {
-        check[0].remove()
-    }
+    await Token.findOneAndRemove({ userId, reason })
+    
     // Create token
     const token = createJWT({ userId }, jwt_exp)
-
+    
     // Sent token
     await Token.create({ userId, reason, token })
 

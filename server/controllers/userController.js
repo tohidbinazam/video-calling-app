@@ -282,7 +282,6 @@ export const disUpdatedUser = async (callId) => {
  
     try {
         await User.findOneAndUpdate({callId}, { callId: null })
-        return await User.find()
     } catch (error) {
         next(error)
     }

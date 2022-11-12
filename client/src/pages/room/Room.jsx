@@ -9,18 +9,18 @@ import axios from 'axios'
 import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { loggedOut } from '../../redux/auth/action';
-import Peer from 'simple-peer'
 import io from "socket.io-client"
 import './Room.css'
 
 
-const socket = io()
+const socket = io.connect('http://localhost:5050')
 const Room = () => {
 
     const dispatch = useDispatch()
     const { user } = useSelector(state => state.auth)
     
     const [ me, setMe ] = useState()
+    const [ toCall, setToCall ] = useState()
     const [ call, setCall ] = useState({
         status : true,
         isCalling: false,
@@ -40,7 +40,7 @@ const Room = () => {
     })
     const myVideo = useRef()
     const userVideo = useRef()
-    const connectionRef = useRef()
+    const connectionRef = useRef(null)
     
     useEffect(() => {
         socket.emit("me", user._id )
@@ -103,7 +103,8 @@ const Room = () => {
 
     // Call a FNF
     const handleCall = (id) => {
-        const peer = new Peer({
+        setToCall(id)
+        const peer = new window.SimplePeer({
             initiator: true,
 			trickle: false,
             // config: {
@@ -130,8 +131,9 @@ const Room = () => {
 			})
 		})
 
-        socket.on("callAccepted", (signal) => {
-            setCall({ status : false, isAccepted : true, isCalling : false })
+        socket.on("callAccepted", (signal, name) => {
+            setCaller((prev) => ({...prev, name}))
+            setCall({ status : false, isAccepted : true, isCalling : false, video: true })
 			peer.signal(signal)
 		})
 
@@ -144,13 +146,13 @@ const Room = () => {
 
     const handleAnswer = () => {
         setCall({ status : false, isAccepted : true, isCalling : false })
-        const peer = new Peer({
+        const peer = new window.SimplePeer({
             initiator: false,
             trickle: false,
 			stream: stream,
         })
         peer.on('signal', (data) => {
-            socket.emit("answerCall", { signal: data, to: caller.callerId })
+            socket.emit("answerCall", { signal: data, to: caller.callerId, name: user.name})
         })
 
         peer.on('stream', (stream) => {
@@ -164,14 +166,32 @@ const Room = () => {
 
     const handleEndCall = () => {
 		connectionRef.current.destroy()
+        if (connectionRef.current.initiator) {
+            socket.emit('callEnd', toCall)
+        } else {
+            socket.emit('callEnd', caller.callerId)
+        }
+        connectionRef.current = null
 		setCall(prev => ({ ...prev, status : true, isAccepted : false}))
 	}
+    const rejectCall = () => {
+		socket.on('callEnd', (data) => {
+            connectionRef.current = data
+            setCall({ status : true, isAccepted : false, isCalling : false})
+        })
+	}
 
+    socket.on('callEnd', (data) => {
+        connectionRef.current = data
+        setCall({ status : true, isAccepted : false, isCalling : false})
+    })
+    
     // Log out and remove cookie
     const handleLogOut = (e) => {
         e.preventDefault()
 
-        axios.delete('api/v1/user/logout').then(() => {
+        axios.post('api/v1/user/logout', { id: user._id }).then((res) => {
+            socket.emit('users', res.data)
             dispatch(loggedOut())
             Cookies.remove('token')
         })
@@ -189,7 +209,9 @@ const Room = () => {
                                     <video className='w-100' playsInline autoPlay ref={myVideo} />
                                 </Col>
                                 <Col md='6'>
-                                    <video className='w-100' playsInline autoPlay ref={userVideo}/>
+                                    {
+                                        connectionRef.current && <video className='w-100' playsInline autoPlay ref={userVideo}/>
+                                    }
                                 </Col>
                             </Row>
                         </Card.Body>
@@ -202,7 +224,7 @@ const Room = () => {
                                 <Button size='lg' onClick={ handleScreen } variant={color.scr}> <MdScreenShare /> Screen share </Button>
                             </div>
                             <div className="w-25 text-end">
-                                <Button variant='danger' size='lg'> <FiPhoneOff /> End Call </Button>
+                                <Button variant='danger' size='lg' onClick={handleEndCall}> <FiPhoneOff /> End Call </Button>
                             </div>
                         </Card.Footer>
                     </Card>
@@ -218,7 +240,7 @@ const Room = () => {
                                     <div>
                                         <Button variant="success" size='lg' onClick={handleAnswer}>Answer</Button>
                                         <b className='mx-3'>OR</b>
-                                        <Button variant="danger" size='lg' onClick={handleAnswer}>Reject</Button>
+                                        <Button variant="danger" size='lg' onClick={rejectCall}>Reject</Button>
                                     </div>
                                 </>
                             }
@@ -254,19 +276,34 @@ const Room = () => {
                             <Form.Control type='text' placeholder='FNF Name or Email'/>
                             <hr />
                             <div className="all-fnf">
+                                <Card bg='warning my-2'>
+                                    <Card.Body className="">
+                                        <div className="user text-center">
+                                            <h4>{ user.name }</h4>
+                                            <b>Active</b>
+                                        </div>
+                                    </Card.Body>
+                                </Card> 
                                 {
-                                    users.map(data => 
-                                        <Card bg='primary my-2'>
+                                    users.map(data => <>
+                                        {
+                                            data._id === user._id ? null : <Card bg={`${data.callId ? 'primary' : 'danger'} my-2`}>
                                             <Card.Body className="fnf">
                                                 <div className="user">
                                                     <h4>{ data.name }</h4>
-                                                    <b>{ data.status ? 'Active' : 'InActive' }</b>
+                                                    <b>{ data.callId ? 'Active' : 'InActive' }</b>
                                                 </div>
                                                 <div className="status">
-                                                    <Button onClick={ () => handleCall(data.callId) } size='lg' variant='dark'>Call Now</Button>
+                                                    {
+                                                        data.callId ? <Button onClick={ () => handleCall(data.callId) } size='lg' variant='dark'>Call Now</Button> : <Button onClick={ () => handleCall(data.callId) } size='lg' variant='dark' disabled>Call Now</Button>
+                                                    }
+                                                    
                                                 </div>
                                             </Card.Body>
-                                        </Card>                                        
+                                        </Card> 
+                                        }
+                                        </>
+                                                                               
                                     )
                                 }                                    
                             </div>

@@ -7,7 +7,7 @@ import userRouter from './routers/userRouter.js'
 import errorHandler from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
 import verifyToken from './controllers/verifyToken.js';
-import { allUpdatedUser } from './controllers/userController.js';
+import { allUpdatedUser, disUpdatedUser } from './controllers/userController.js';
 
 dotenv.config()
 const port = process.env.PORT || 5080
@@ -23,7 +23,12 @@ app.use(express.urlencoded({ extended : false }))
 app.use(cookieParser())
 
 const server = createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+	cors: {
+		origin: "http://localhost:3000",
+		methods: [ "GET", "POST" ]
+	}
+})
 
 io.on('connection', (socket) => {
     
@@ -43,10 +48,14 @@ io.on('connection', (socket) => {
 	})
 
     socket.on("answerCall", (data) => {
-		io.to(data.to).emit("callAccepted", data.signal)
+		io.to(data.to).emit("callAccepted", data.signal, data.name)
+	})
+    socket.on("callEnd", (data) => {
+		io.to(data).emit("callEnd", null)
 	})
 
     socket.on("disconnect", () => {
+        disUpdatedUser(socket.id)
 		console.log(`Socket clint Disconnect ID ${socket.id}`);
 	})
 })

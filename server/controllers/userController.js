@@ -118,8 +118,15 @@ export const userLogin = async (req, res, next) => {
  * @method DELETE
  */
 
-export const userLogout = (req, res, next) => {
-    res.clearCookie('access_token').status(200).json('Remove cookie')
+export const userLogout = async (req, res, next) => {
+
+    try {
+        await User.findByIdAndUpdate(req.body.id, { callId: null })
+        const users = await User.find()
+        res.clearCookie('access_token').status(200).json(users)
+    } catch (error) {
+        next(error)
+    }
 }
 
 
@@ -266,6 +273,16 @@ export const allUpdatedUser = async (id, callId) => {
  
     try {
         await User.findByIdAndUpdate(id, { callId })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const disUpdatedUser = async (callId) => {
+ 
+    try {
+        await User.findOneAndUpdate({callId}, { callId: null })
+        return await User.find()
     } catch (error) {
         next(error)
     }

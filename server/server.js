@@ -18,6 +18,7 @@ const app = express()
 // Body init
 app.use(express.json())
 app.use(express.urlencoded({ extended : false }))
+app.use(express.static('server/public'))
 
 // cookie parser init
 app.use(cookieParser())

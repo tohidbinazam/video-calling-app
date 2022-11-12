@@ -107,19 +107,19 @@ const Room = () => {
         const peer = new window.SimplePeer({
             initiator: true,
 			trickle: false,
-            // config: {
-            //     iceServers: [
-            //         {
-            //         urls: "stun:numb.viagenie.ca",
-            //         username: "sultan1640@gmail.com",
-            //         credential: "98376683"
-            //     },
-            //     {
-            //         urls: "turn:numb.viagenie.ca",
-            //         username: "sultan1640@gmail.com",
-            //         credential: "98376683"
-            //     }
-            // ]},
+            config: {
+                iceServers: [
+                    {
+                    urls: "stun:numb.viagenie.ca",
+                    username: "sultan1640@gmail.com",
+                    credential: "98376683"
+                },
+                {
+                    urls: "turn:numb.viagenie.ca",
+                    username: "sultan1640@gmail.com",
+                    credential: "98376683"
+                }
+            ]},
             stream: stream,
         })
         peer.on("signal", (data) => {
@@ -175,10 +175,8 @@ const Room = () => {
 		setCall(prev => ({ ...prev, status : true, isAccepted : false}))
 	}
     const rejectCall = () => {
-		socket.on('callEnd', (data) => {
-            connectionRef.current = data
-            setCall({ status : true, isAccepted : false, isCalling : false})
-        })
+        socket.emit('callEnd', caller.callerId)
+        setCall({ status : true, isAccepted : false, isCalling : false})
 	}
 
     socket.on('callEnd', (data) => {
@@ -189,7 +187,7 @@ const Room = () => {
     // Log out and remove cookie
     const handleLogOut = (e) => {
         e.preventDefault()
-
+        handleEndCall()
         axios.post('api/v1/user/logout', { id: user._id }).then((res) => {
             socket.emit('users', res.data)
             dispatch(loggedOut())
@@ -224,7 +222,7 @@ const Room = () => {
                                 <Button size='lg' onClick={ handleScreen } variant={color.scr}> <MdScreenShare /> Screen share </Button>
                             </div>
                             <div className="w-25 text-end">
-                                <Button variant='danger' size='lg' onClick={handleEndCall}> <FiPhoneOff /> End Call </Button>
+                                <Button variant='danger' size='lg' onClick={ handleEndCall }> <FiPhoneOff /> End Call </Button>
                             </div>
                         </Card.Footer>
                     </Card>
@@ -238,16 +236,16 @@ const Room = () => {
                                 <>
                                     <h1>{ caller.name } is calling...</h1>
                                     <div>
-                                        <Button variant="success" size='lg' onClick={handleAnswer}>Answer</Button>
+                                        <Button variant="success" size='lg' onClick={ handleAnswer }>Answer</Button>
                                         <b className='mx-3'>OR</b>
-                                        <Button variant="danger" size='lg' onClick={rejectCall}>Reject</Button>
+                                        <Button variant="danger" size='lg' onClick={ rejectCall }>Reject</Button>
                                     </div>
                                 </>
                             }
                             {
                                 call.isAccepted &&
                                 <>
-                                    <h1>Connected with { caller.name }</h1>
+                                    <h1>Connected with <b className='text-success'>{ caller.name }</b></h1>
                                     <div>
                                     <Button variant="danger" size='lg' onClick={ handleEndCall }>End Call</Button>
                                     </div>
@@ -276,8 +274,8 @@ const Room = () => {
                             <Form.Control type='text' placeholder='FNF Name or Email'/>
                             <hr />
                             <div className="all-fnf">
-                                <Card bg='warning my-2'>
-                                    <Card.Body className="">
+                                <Card bg='dark my-2 text-white'>
+                                    <Card.Body>
                                         <div className="user text-center">
                                             <h4>{ user.name }</h4>
                                             <b>Active</b>

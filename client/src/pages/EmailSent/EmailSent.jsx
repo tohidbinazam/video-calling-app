@@ -13,7 +13,7 @@ const EmailSent = () => {
                 <div className="col-md-4">
                     <div className="card">
                         <div className="card-header">
-                            <img src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a252de00b20.png" alt="" />
+                            <img src="/logo/download.png" alt="" />
                         </div>
                         <div className="card-body">
                             <h6 className='my-3'>Email Sent</h6>

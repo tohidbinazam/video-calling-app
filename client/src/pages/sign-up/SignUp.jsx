@@ -57,7 +57,7 @@ const SignUp = () => {
             <div className="auth-container">
                 <div className="auth-login-warper">
                     <div className='auth-login'>
-                        <a href="https://"><img src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a252de00b20.png" alt="" /></a>
+                        <a href="https://"><img src="/logo/download.png" alt="" /></a>
                         <h5> Sign up to make videos call with your friends. </h5>
                         <a className='login-with-fb-sign' href="https://"> <AiFillFacebook /> Log in with Facebook </a>
                         <div className="divider">OR</div>

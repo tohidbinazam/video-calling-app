@@ -37,7 +37,7 @@ const Login = () => {
                 await axios.post('api/v1/user/login', input).then(res => {
 
                     if (res.data.user.isVerified) {
-                        swal('Good job', 'Successfully login you account', 'success')
+                        swal('Welcome Back', 'Successfully login you account', 'success')
                         Cookie.set('token', res.data.token)
                         dispatch(loggedIn(res.data.user))
                     }else{
@@ -60,7 +60,7 @@ const Login = () => {
                 <div className="auth-container">
                     <div className="auth-login-warper">
                         <div className='auth-login'>
-                            <a href="https://"><img src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a252de00b20.png" alt="" /></a>
+                            <a href="https://"><img src="/logo/download.png" alt="" /></a>
                             <form onSubmit={ handleSubmit }>
                                 <input type="text" name="email" onChange={ handleAuth } placeholder='Email' />
                                 <input type="password" name="password" onChange={ handleAuth } placeholder='Password' />

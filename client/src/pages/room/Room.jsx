@@ -20,7 +20,11 @@ const Room = () => {
     const { user } = useSelector(state => state.auth)
     
     const [ me, setMe ] = useState()
-    const [ toCall, setToCall ] = useState()
+    const [ toCall, setToCall ] = useState({
+        status : false,
+        id : '',
+        name : ''
+    })
     const [ call, setCall ] = useState({
         status : true,
         isCalling: false,
@@ -105,8 +109,9 @@ const Room = () => {
     }
 
     // Call a FNF
-    const handleCall = (id) => {
-        setToCall(id)
+    const handleCall = (id, name) => {
+        setCall((prev) => ({...prev, status : false }))
+        setToCall((prev) => ({...prev, id, name, status : true}))
         const peer = new window.SimplePeer({
             initiator: true,
 			trickle: false,
@@ -136,7 +141,8 @@ const Room = () => {
 
         socket.on("callAccepted", (signal, name) => {
             setCaller((prev) => ({...prev, name}))
-            setCall({ status : false, isAccepted : true, isCalling : false, video: true })
+            setToCall((prev) => ({...prev, status : false}))
+            setCall({ status : false, isAccepted : true, isCalling : false})
 			peer.signal(signal)
 		})
 
@@ -188,6 +194,7 @@ const Room = () => {
 
     socket.on('callEnd', (data) => {
         connectionRef.current = data
+        setToCall((prev) => ({...prev, status : false}))
         setCall({ status : true, isAccepted : false, isCalling : false})
     })
     
@@ -237,12 +244,15 @@ const Room = () => {
                     <Card>
                         <Card.Body className='d-flex justify-content-between'>
                             {
+                                toCall.status && <h1>You Call <b className='text-success'>{ toCall.name }</b></h1>
+                            }
+                            {
                                 call.status && <h1>All Calling Status</h1>
                             }
                             {
                                 call.isCalling &&
                                 <>
-                                    <h1>{ caller.name } is calling...</h1>
+                                    <h1><b className='text-success'>{ caller.name }</b> is calling...</h1>
                                     <div>
                                         <Button variant="success" size='lg' onClick={ handleAnswer }>Answer</Button>
                                         <b className='mx-3'>OR</b>
@@ -301,7 +311,7 @@ const Room = () => {
                                                 </div>
                                                 <div className="status">
                                                     {
-                                                        data.callId ? <Button onClick={ () => handleCall(data.callId) } size='lg' variant='dark'>Call Now</Button> : <Button onClick={ () => handleCall(data.callId) } size='lg' variant='dark' disabled>Call Now</Button>
+                                                        data.callId ? <Button onClick={ () => handleCall(data.callId, data.name) } size='lg' variant='dark'>Call Now</Button> : <Button onClick={ () => handleCall(data.callId) } size='lg' variant='dark' disabled>Call Now</Button>
                                                     }
                                                     
                                                 </div>

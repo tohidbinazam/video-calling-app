@@ -41,6 +41,7 @@ const Room = () => {
     const myVideo = useRef()
     const userVideo = useRef()
     const connectionRef = useRef(null)
+    const audio = useRef()
     
     useEffect(() => {
         socket.emit("me", user._id )
@@ -57,16 +58,18 @@ const Room = () => {
         })
         
         socket.on("callUser", (data) => {
-            console.log();
+            audio.current.play();
             setCall(prev => ({ ...prev, status : false, isCalling : true }))
-			setCaller({
+            setCaller({
                 name : data.name,
                 callerId: data.from,
                 callerSignal: data.signal
             })
-		})
-    }, [user._id])
+        })
 
+    }, [ user._id ])
+
+    
     socket.on('users', (users) => {
         setUsers(users)
         setMe(users.find(data => data._id === user._id))
@@ -145,6 +148,8 @@ const Room = () => {
     }
 
     const handleAnswer = () => {
+        audio.current.pause()
+        audio.current.currentTime = 0;
         setCall({ status : false, isAccepted : true, isCalling : false })
         const peer = new window.SimplePeer({
             initiator: false,
@@ -175,6 +180,8 @@ const Room = () => {
 		setCall(prev => ({ ...prev, status : true, isAccepted : false}))
 	}
     const rejectCall = () => {
+        audio.current.pause()
+        audio.current.currentTime = 0;
         socket.emit('callEnd', caller.callerId)
         setCall({ status : true, isAccepted : false, isCalling : false})
 	}
@@ -187,7 +194,7 @@ const Room = () => {
     // Log out and remove cookie
     const handleLogOut = (e) => {
         e.preventDefault()
-        handleEndCall()
+        connectionRef.current && handleEndCall()
         axios.post('api/v1/user/logout', { id: user._id }).then((res) => {
             socket.emit('users', res.data)
             dispatch(loggedOut())
@@ -200,9 +207,10 @@ const Room = () => {
         <Container>
             <Row>
                 <Col md='8'>
+                    <audio src="/audio/zoom-call.mp3" loop ref={audio}></audio>
                     <Card className='mb-3'>
                         <Card.Body>
-                            <Row>
+                            <Row className='video-height'>
                                 <Col md='6'>
                                     <video className='w-100' playsInline autoPlay ref={myVideo} />
                                 </Col>
@@ -300,8 +308,7 @@ const Room = () => {
                                             </Card.Body>
                                         </Card> 
                                         }
-                                        </>
-                                                                               
+                                        </>                                    
                                     )
                                 }                                    
                             </div>

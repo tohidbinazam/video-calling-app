@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './ForgotPassword.scss'
 import { Link, useNavigate } from 'react-router-dom'
 import { FiLock } from 'react-icons/fi';
@@ -12,12 +12,18 @@ const ForgotPassword = () => {
 
     const navigate = useNavigate()
 
+    useEffect(() => {
+        const email = localStorage.getItem('email')
+        setEmail(email)
+    }, [])
+
     const handleSubmit = (e) => {
         e.preventDefault()
         if (email) {
             axios.post('api/v1/user/forgot-password', { email }).then(res => {
+                localStorage.setItem('email', email)
                 toast.success(res.data)
-                navigate(`/email-sent/forgot-password/${ email }`)
+                navigate(`/email-sent/forgot-password`)
             }).catch((error) => {
                 toast.error(error.response.data.message)
             })
@@ -39,7 +45,7 @@ const ForgotPassword = () => {
                             <p>Enter your email, phone, or username and we'll send you a link to get back into your account.</p>
                             <form onSubmit={ handleSubmit }>
                                 <div className="my-3">
-                                    <input onChange={ e => setEmail(e.target.value) } className='form-control' type="text" placeholder='Email, Phone or Username'/>
+                                    <input value={ email } onChange={ e => setEmail(e.target.value) } className='form-control' type="text" placeholder='Email'/>
                                 </div>
                                 <button className='w-100 btn fw-bold text-white' type="submit">Send Login Link</button>
                             </form>

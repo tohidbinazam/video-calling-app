@@ -36,7 +36,7 @@ const SignUp = () => {
                 await axios.post('api/v1/user/register', input).then(res => {
                     localStorage.setItem('email', res.data.email)
                     swal('Success', 'Your account created successfully', 'success')
-                    navigate('/account-verify/email-sent')
+                    navigate('/email-sent/account-verify')
                 }).catch((error) => {
                     toast.error(error.response.data.message)
                 })

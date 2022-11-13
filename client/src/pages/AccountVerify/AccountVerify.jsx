@@ -22,7 +22,7 @@ const AccountVerify = () => {
         await axios.post('api/v1/user/resent-verify', { email }).then(res => {
             localStorage.setItem('email', email)
             swal('Success', 'Verification link sent in your account', 'success')
-            navigate('/account-verify/email-sent')
+            navigate('/email-sent/account-verify')
         }).catch((error) => {
             swal('Wrong', error.response.data.message, 'warning')
         })

@@ -34,12 +34,14 @@ const Login = () => {
         // loaderDispatch('START')
         try {
             if (input.email && input.password) {
-                await axios.post('api/v1/user/login', input).then(res => {
+                localStorage.setItem('email', input.email)
 
+                await axios.post('api/v1/user/login', input).then(res => {  
                     if (res.data.user.isVerified) {
                         swal('Welcome Back', 'Successfully login you account', 'success')
                         Cookie.set('token', res.data.token)
                         dispatch(loggedIn(res.data.user))
+                        localStorage.removeItem('email')
                     }else{
                         toast.error('Please verify your account')
                         navigate('/account-verify')

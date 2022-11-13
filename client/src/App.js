@@ -35,7 +35,7 @@ function App() {
         <Route path='/signup' element={ <AuthMiddleware> <SignUp /> </AuthMiddleware> }/>
         <Route path='/login' element={ <AuthMiddleware> <Login /> </AuthMiddleware> } />
         <Route path='/account-verify' element={ <AccountVerify /> } />
-        <Route path='/account-verify/email-sent' element={ <EmailSent /> } />
+        <Route path='/email-sent/:main' element={ <EmailSent /> } />
         <Route path='/verify-account/:token' element={ <Verify /> } />
         <Route path='/invalid-link/:main' element={ <InvalidLink /> } />
         <Route path='/forgot-password' element={ <ForgotPassword /> } />

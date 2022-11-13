@@ -18,7 +18,6 @@ const Verify = () => {
       // User verify update
       axios.post('/api/v1/user/verify', { token, user_id: res.data }).then(res => {
         setStatus(res.data)
-        localStorage.removeItem('email')
       })
   
     }).catch(error => {

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import swal from 'sweetalert'
 
@@ -11,16 +11,21 @@ const ResetPassword = () => {
 
     // Password input state
     const [ pass, setPass ] = useState('')
+    const [ user_id, setUser_id ] = useState('')
 
-    // User id variable
-    let user_id
 
-    // Token validation function
-    axios.post('api/v1/verify-token', { token }).then((res) => {
-        user_id = res.data
-    }).catch(() => {
-      navigate('/invalid-link/account-verify')
-    })
+    useEffect(() => {
+        // Token validation function
+        axios.post('/api/v1/verify-token', { token }).then((res) => {
+            setUser_id(res.data)
+        }).catch(() => {
+          navigate('/invalid-link/forgot-password')
+        })
+        
+    }, [navigate, token])
+
+    
+    
     
     // Password submit form controller
     const handleSubmit = (e) => {
@@ -28,7 +33,7 @@ const ResetPassword = () => {
         if (pass.password === pass.cPassword) {
             
             // Reset password api call
-            axios.patch('api/v1/user/reset-password', {token, user_id, pass: pass.password }).then(res => {
+            axios.patch('/api/v1/user/reset-password', {token, user_id, pass: pass.password }).then(res => {
                 swal('Success', res.data, 'success')
                 navigate('/login')
             })

@@ -11,8 +11,13 @@ import {
   allUpdatedUser,
   disUpdatedUser,
 } from './controllers/userController.js';
+import path from 'path';
 
 dotenv.config();
+mongoDBConnect();
+
+const __dirname = path.resolve();
+
 const port = process.env.PORT || 5080;
 
 // Express init
@@ -84,6 +89,5 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
 }
 
 server.listen(port, () => {
-  mongoDBConnect();
   console.log(`SERVER RUNNING ON PORT: ${port}`);
 });

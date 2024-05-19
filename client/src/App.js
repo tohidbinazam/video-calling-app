@@ -10,36 +10,58 @@ import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
 import InvalidLink from './pages/InvalidLink/InvalidLink';
 import { useEffect } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
-import { isLoggedIn } from './redux/auth/action';
-import AuthMiddleware from './middlewares/AuthMiddleware';
+import { isLoggedIn, loginStatus } from './redux/auth/action';
+import PrivateGard from './middlewares/PrivateGard';
+import PublicGard from './middlewares/PublicGard';
 
 function App() {
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   // Get token
-  const token = Cookies.get('token')
+  const token = Cookies.get('token');
 
   useEffect(() => {
-    
-    dispatch(isLoggedIn(token))
-
-  },[dispatch, token])
+    if (token) {
+      dispatch(loginStatus());
+      dispatch(isLoggedIn(token));
+    }
+  }, [dispatch, token]);
 
   return (
-    <div className="App">
+    <div className='App'>
       <Routes>
-        <Route path='/' element={ <AuthMiddleware> <Room /> </AuthMiddleware> }/>
-        <Route path='/signup' element={ <AuthMiddleware> <SignUp /> </AuthMiddleware> }/>
-        <Route path='/login' element={ <AuthMiddleware> <Login /> </AuthMiddleware> } />
-        <Route path='/account-verify' element={ <AccountVerify /> } />
-        <Route path='/email-sent/:main' element={ <EmailSent /> } />
-        <Route path='/verify-account/:token' element={ <Verify /> } />
-        <Route path='/invalid-link/:main' element={ <InvalidLink /> } />
-        <Route path='/forgot-password' element={ <ForgotPassword /> } />
-        <Route path='/reset-password/:token' element={ <ResetPassword /> } />
+        <Route
+          path='/'
+          element={
+            <PrivateGard>
+              <Room />
+            </PrivateGard>
+          }
+        />
+        <Route
+          path='/signup'
+          element={
+            <PublicGard>
+              <SignUp />
+            </PublicGard>
+          }
+        />
+        <Route
+          path='/login'
+          element={
+            <PublicGard>
+              <Login />
+            </PublicGard>
+          }
+        />
+        <Route path='/account-verify' element={<AccountVerify />} />
+        <Route path='/email-sent/:main' element={<EmailSent />} />
+        <Route path='/verify-account/:token' element={<Verify />} />
+        <Route path='/invalid-link/:main' element={<InvalidLink />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
+        <Route path='/reset-password/:token' element={<ResetPassword />} />
       </Routes>
     </div>
   );

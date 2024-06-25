@@ -9,7 +9,6 @@ import Verify from './pages/verify/Verify';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import ResetPassword from './pages/ResetPassword/ResetPassword';
 import InvalidLink from './pages/InvalidLink/InvalidLink';
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
 import { isLoggedIn, loginStatus } from './redux/auth/action';
@@ -22,12 +21,10 @@ function App() {
   // Get token
   const token = Cookies.get('token');
 
-  useEffect(() => {
-    if (token) {
-      dispatch(loginStatus());
-      dispatch(isLoggedIn(token));
-    }
-  }, [dispatch, token]);
+  if (token) {
+    dispatch(loginStatus());
+    dispatch(isLoggedIn(token));
+  }
 
   return (
     <div className='App'>

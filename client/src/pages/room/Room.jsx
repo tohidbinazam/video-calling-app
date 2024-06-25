@@ -50,7 +50,7 @@ const Room = () => {
   const audio = useRef();
 
   useEffect(() => {
-    socket.emit('me', user._id);
+    socket.emit('me', user?._id);
 
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
@@ -77,11 +77,11 @@ const Room = () => {
         callerSignal: data.signal,
       });
     });
-  }, [user._id]);
+  }, [user]);
 
   socket.on('users', (users) => {
     setUsers(users);
-    setMe(users.find((data) => data._id === user._id));
+    setMe(users.find((data) => data._id === user?._id));
   });
 
   const handleMic = () => {
@@ -350,13 +350,13 @@ const Room = () => {
                   <Card bg='dark my-2 text-white'>
                     <Card.Body>
                       <div className='user text-center'>
-                        <h4>{user.name}</h4>
+                        <h4>{user?.name}</h4>
                         <b>Active</b>
                       </div>
                     </Card.Body>
                   </Card>
-                  {users.map((data) => (
-                    <>
+                  {users.map((data, index) => (
+                    <div key={index}>
                       {data._id === user._id ? null : (
                         <Card bg={`${data.callId ? 'primary' : 'danger'} my-2`}>
                           <Card.Body className='fnf'>
@@ -389,7 +389,7 @@ const Room = () => {
                           </Card.Body>
                         </Card>
                       )}
-                    </>
+                    </div>
                   ))}
                 </div>
               </Card.Body>
